@@ -1,31 +1,32 @@
-package org.thbounzer.lwgldemo;
+package thebounzer.org.lwgldemo;
 
-
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.PixelFormat;
-import org.lwjgl.util.glu.GLU;
+import thebounzer.org.lwgldemo.glutils.GenericShader;
+import thebounzer.org.lwgldemo.glutils.OpenGLDisplay;
+import thebounzer.org.lwgldemo.glutils.ShaderProgram;
 
 
-/** @author Oskar */
 public class Main {
 
 // Entry point for the application
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		new Main();
 	}
 	
@@ -40,11 +41,9 @@ public class Main {
 	private int vboiId = 0;
 	private int indicesCount = 0;
 	// Shader variables
-	private int vsId = 0;
-	private int fsId = 0;
-	private int pId = 0;
+	private ShaderProgram program;
 	
-	public Main() {
+	public Main() throws IOException {
 		// Initialize OpenGL (Display)
 		this.setupOpenGL();
 		
@@ -66,22 +65,7 @@ public class Main {
 	}
 
 	public void setupOpenGL() {
-		// Setup an OpenGL context with API version 3.2
-		try {
-			PixelFormat pixelFormat = new PixelFormat();
-			ContextAttribs contextAtrributes = new ContextAttribs(3, 2)
-				.withForwardCompatible(true)
-				.withProfileCore(true);
-			
-			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
-			Display.setTitle(WINDOW_TITLE);
-			Display.create(pixelFormat, contextAtrributes);
-			
-			GL11.glViewport(0, 0, WIDTH, HEIGHT);
-		} catch (LWJGLException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
+                OpenGLDisplay.init(WIDTH, HEIGHT, WINDOW_TITLE);
 		
 		// Setup an XNA like background color
 		GL11.glClearColor(0.4f, 0.6f, 0.9f, 0f);
@@ -96,7 +80,6 @@ public class Main {
 				-0.5f, 0.5f, 0f, 1f,
 				-0.5f, -0.5f, 0f, 1f,
 				0.5f, -0.5f, 0f, 1f,
-				0.5f, 0.5f, 0f, 1f
 		};
 		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
 		verticesBuffer.put(vertices);
@@ -106,7 +89,6 @@ public class Main {
 				1f, 0f, 0f, 1f,
 				0f, 1f, 0f, 1f,
 				0f, 0f, 1f, 1f,
-				1f, 1f, 1f, 1f,
 		};
 		FloatBuffer colorsBuffer = BufferUtils.createFloatBuffer(colors.length);
 		colorsBuffer.put(colors);
@@ -150,38 +132,28 @@ public class Main {
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 	
-	private void setupShaders() {
-		int errorCheckValue = GL11.glGetError();
+	private void setupShaders() throws IOException {
 		
 		// Load the vertex shader
-		vsId = this.loadShader("/home/carlo/Documents/Sources/ogl/lwgldemo/src/main/java/org/thbounzer/lwgldemo/screen.vert", GL20.GL_VERTEX_SHADER);
+                GenericShader vertex = new GenericShader("src/main/resources/shaders/screen.vert",GL20.GL_VERTEX_SHADER); 
 		// Load the fragment shader
-		fsId = this.loadShader("/home/carlo/Documents/Sources/ogl/lwgldemo/src/main/java/org/thbounzer/lwgldemo/screen.frag", GL20.GL_FRAGMENT_SHADER);
-		
+                GenericShader fragment = new GenericShader("src/main/resources/shaders/screen.frag",GL20.GL_FRAGMENT_SHADER);
+                
+                ArrayList<GenericShader> shaders = new ArrayList<GenericShader>();
+                shaders.add(vertex);
+                shaders.add(fragment);
+		HashMap<Integer,String> attributes = new HashMap<Integer, String>();
+                attributes.put(0, "in_Position");
+                attributes.put(1, "in_Color");
 		// Create a new shader program that links both shaders
-		pId = GL20.glCreateProgram();
-		GL20.glAttachShader(pId, vsId);
-		GL20.glAttachShader(pId, fsId);
-
-		// Position information will be attribute 0
-		GL20.glBindAttribLocation(pId, 0, "in_Position");
-		// Color information will be attribute 1
-		GL20.glBindAttribLocation(pId, 1, "in_Color");
-		
-		GL20.glLinkProgram(pId);
-		GL20.glValidateProgram(pId);
-		
-		errorCheckValue = GL11.glGetError();
-		if (errorCheckValue != GL11.GL_NO_ERROR) {
-			System.out.println("ERROR - Could not create the shaders:" + GLU.gluErrorString(errorCheckValue));
-			System.exit(-1);
-		}
+		program = new ShaderProgram();
+                program.compile(shaders, attributes);
 	}
 	
 	public void loopCycle() {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		
-		GL20.glUseProgram(pId);
+		GL20.glUseProgram(program.getId());
 		
 		// Bind to the VAO that has all the information about the vertices
 		GL30.glBindVertexArray(vaoId);
@@ -204,13 +176,7 @@ public class Main {
 	
 	public void destroyOpenGL() {
 		// Delete the shaders
-		GL20.glUseProgram(0);
-		GL20.glDetachShader(pId, vsId);
-		GL20.glDetachShader(pId, fsId);
-		
-		GL20.glDeleteShader(vsId);
-		GL20.glDeleteShader(fsId);
-		GL20.glDeleteProgram(pId);
+                program.destroy();
 		
 		// Select the VAO
 		GL30.glBindVertexArray(vaoId);
@@ -238,27 +204,4 @@ public class Main {
 		Display.destroy();
 	}
 	
-	public int loadShader(String filename, int type) {
-		StringBuilder shaderSource = new StringBuilder();
-		int shaderID = 0;
-		
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(filename));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				shaderSource.append(line).append("\n");
-			}
-			reader.close();
-		} catch (IOException e) {
-			System.err.println("Could not read file.");
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		
-		shaderID = GL20.glCreateShader(type);
-		GL20.glShaderSource(shaderID, shaderSource);
-		GL20.glCompileShader(shaderID);
-		
-		return shaderID;
-	}
 }

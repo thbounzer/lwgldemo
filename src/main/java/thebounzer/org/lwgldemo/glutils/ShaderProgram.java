@@ -57,6 +57,19 @@ public class ShaderProgram {
         pId = programId;
     }
     
+    public void compile(ArrayList<GenericShader> shaders) throws IOException{
+        programShaders = shaders;
+        int programId = allocateProgram();
+        for(GenericShader shader : shaders){
+            compileShader(programId, shader);
+        }
+        if (!validateProgram(programId)){
+            throw new IOException("Unable to compile the shader program.");
+        }
+        pId = programId;
+    }    
+    
+    
     public int getId(){
         return pId;
     }

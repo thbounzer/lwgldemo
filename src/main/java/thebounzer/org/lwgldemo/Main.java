@@ -1,23 +1,18 @@
 package thebounzer.org.lwgldemo;
 
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.PixelFormat;
+import org.lwjgl.opengl.GL43;
 import thebounzer.org.lwgldemo.glutils.GenericShader;
 import thebounzer.org.lwgldemo.glutils.OpenGLDisplay;
 import thebounzer.org.lwgldemo.glutils.ShaderProgram;
@@ -27,7 +22,7 @@ public class Main {
 
 // Entry point for the application
 	public static void main(String[] args) throws IOException {
-		new Main();
+		new OglBook();
 	}
 	
 	// Setup variables
@@ -47,7 +42,7 @@ public class Main {
 		// Initialize OpenGL (Display)
 		this.setupOpenGL();
 		
-		this.setupQuad();
+		//this.setupQuad();
 		this.setupShaders();
 		
 		while (!Display.isCloseRequested()) {
@@ -68,7 +63,7 @@ public class Main {
                 OpenGLDisplay.init(WIDTH, HEIGHT, WINDOW_TITLE);
 		
 		// Setup an XNA like background color
-		GL11.glClearColor(0.4f, 0.6f, 0.9f, 0f);
+		GL11.glClearColor(0.4f, 0.6f, 0.9f, 0.5f);
 		
 		// Map the internal OpenGL coordinate system to the entire screen
 		GL11.glViewport(0, 0, WIDTH, HEIGHT);
@@ -84,6 +79,7 @@ public class Main {
 		FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
 		verticesBuffer.put(vertices);
 		verticesBuffer.flip();
+                
 		
 		float[] colors = {
 				1f, 0f, 0f, 1f,
@@ -154,23 +150,27 @@ public class Main {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		
 		GL20.glUseProgram(program.getId());
-		
+                
+                vaoId = GL30.glGenVertexArrays();
+		GL30.glBindVertexArray(vaoId);		
+                
 		// Bind to the VAO that has all the information about the vertices
-		GL30.glBindVertexArray(vaoId);
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
+//		GL30.glBindVertexArray(vaoId);
+//		GL20.glEnableVertexAttribArray(0);
+//		GL20.glEnableVertexAttribArray(1);
 		
 		// Bind to the index VBO that has all the information about the order of the vertices
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId);
+//		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId);
 		
 		// Draw the vertices
-		GL11.glDrawElements(GL11.GL_TRIANGLES, indicesCount, GL11.GL_UNSIGNED_BYTE, 0);
-		
+                //GL11.glPointSize(10.0f);
+		//GL11.glDrawElements(GL11.GL_POINTS, indicesCount, GL11.GL_UNSIGNED_BYTE, 0);
+		GL11.glDrawArrays(GL11.GL_LINE_LOOP, 0, 3);
 		// Put everything back to default (deselect)
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
-		GL30.glBindVertexArray(0);
+//		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+//		GL20.glDisableVertexAttribArray(0);
+//		GL20.glDisableVertexAttribArray(1);
+//		GL30.glBindVertexArray(0);
 		GL20.glUseProgram(0);
 	}
 	
@@ -178,24 +178,24 @@ public class Main {
 		// Delete the shaders
                 program.destroy();
 		
-		// Select the VAO
-		GL30.glBindVertexArray(vaoId);
-		
-		// Disable the VBO index from the VAO attributes list
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
-		
-		// Delete the vertex VBO
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		GL15.glDeleteBuffers(vboId);
-		
-		// Delete the color VBO
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		GL15.glDeleteBuffers(vbocId);
-		
-		// Delete the index VBO
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-		GL15.glDeleteBuffers(vboiId);
+//		// Select the VAO
+//		GL30.glBindVertexArray(vaoId);
+//		
+//		// Disable the VBO index from the VAO attributes list
+//		GL20.glDisableVertexAttribArray(0);
+//		GL20.glDisableVertexAttribArray(1);
+//		
+//		// Delete the vertex VBO
+//		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+//		GL15.glDeleteBuffers(vboId);
+//		
+//		// Delete the color VBO
+//		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+//		GL15.glDeleteBuffers(vbocId);
+//		
+//		// Delete the index VBO
+//		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+//		GL15.glDeleteBuffers(vboiId);
 		
 		// Delete the VAO
 		GL30.glBindVertexArray(0);

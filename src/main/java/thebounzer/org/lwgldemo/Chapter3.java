@@ -63,7 +63,7 @@ public class Chapter3 extends Chapter{
         float[] offsetPos = new float[]{(float)Math.sin(time),(float)Math.cos(time),0.0f,1.0f};
         GL20.glVertexAttrib4f(0, offsetPos[0],offsetPos[1],offsetPos[2],offsetPos[3]);
         float[] color = new FColor().yellow();
-        GL20.glVertexAttrib4f(1, color[0],color[1],color[2],color[3]);
+        GL20.glVertexAttrib4f(1, color[0],(float) Math.cos(time),(float) Math.sin(time),color[3]);
     }
 
     @Override

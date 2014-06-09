@@ -23,11 +23,8 @@
  */
 
 package thebounzer.org.lwgldemo;
-import java.nio.FloatBuffer;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
 import thebounzer.org.lwgldemo.glutils.OpenGLDisplay;
 import thebounzer.org.thboglutils.FColor;
 
@@ -47,10 +44,12 @@ public class OglBook {
         this.setupOpenGL();
         Chapter chapter = new Chapter3();
         chapter.shaderSetup();
-        FloatBuffer backgrdColor = initBackgrdColor(new FColor().black());
+        // Setup background color
+        float[] color = new FColor().white();
+        GL11.glClearColor(color[0],color[1],color[2],color[3]);
         while (!Display.isCloseRequested()) {
                 // Do a single loop (logic/render)
-                this.updateBackgroundColor(backgrdColor);
+                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
                 chapter.loopCycle();
                 // Force a maximum FPS of about 60
                 Display.sync(60);
@@ -74,16 +73,6 @@ public class OglBook {
     public void destroyDisplay() {
         Display.destroy();
     }
-    
-    private void updateBackgroundColor(FloatBuffer backgrdColor){
-        GL30.glClearBuffer(GL11.GL_COLOR, 0,backgrdColor);
-    }
-    
-    private FloatBuffer initBackgrdColor(float[] color){
-        FloatBuffer backgrdColor = BufferUtils.createFloatBuffer(color.length);
-        backgrdColor.put(color);
-        backgrdColor.flip();            
-        return backgrdColor;
-    }
+   
     
 }

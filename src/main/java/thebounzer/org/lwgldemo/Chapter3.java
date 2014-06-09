@@ -68,7 +68,7 @@ public class Chapter3 extends Chapter{
         GenericShader vertex = new GenericShader("src/main/resources/shadersCap3/shader.vert",GL20.GL_VERTEX_SHADER); 
         // Load the fragment shader
         GenericShader fragment = new GenericShader("src/main/resources/shaders/screen.frag",GL20.GL_FRAGMENT_SHADER);
-
+        
         ArrayList<GenericShader> shaders = new ArrayList<GenericShader>();
         shaders.add(vertex);
         shaders.add(fragment);

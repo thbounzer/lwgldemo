@@ -45,7 +45,7 @@ public class OglBook {
         Chapter chapter = new Chapter3();
         chapter.shaderSetup();
         // Setup background color
-        float[] color = new FColor().white();
+        float[] color = new FColor().black();
         GL11.glClearColor(color[0],color[1],color[2],color[3]);
         while (!Display.isCloseRequested()) {
                 // Do a single loop (logic/render)

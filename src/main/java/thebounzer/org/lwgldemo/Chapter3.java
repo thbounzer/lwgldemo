@@ -33,6 +33,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import thebounzer.org.lwgldemo.glutils.GenericShader;
 import thebounzer.org.lwgldemo.glutils.ShaderProgram;
+import thebounzer.org.thboglutils.FColor;
 
 /**
  *
@@ -61,13 +62,14 @@ public class Chapter3 extends Chapter{
     private void attributesBind(float time){
         float[] offsetPos = new float[]{(float)Math.sin(time),(float)Math.cos(time),0.0f,1.0f};
         GL20.glVertexAttrib4f(0, offsetPos[0],offsetPos[1],offsetPos[2],offsetPos[3]);
+        float[] color = new FColor().yellow();
+        GL20.glVertexAttrib4f(1, color[0],color[1],color[2],color[3]);
     }
 
     @Override
     public void shaderSetup() {
         GenericShader vertex = new GenericShader("src/main/resources/shadersCap3/shader.vert",GL20.GL_VERTEX_SHADER); 
-        // Load the fragment shader
-        GenericShader fragment = new GenericShader("src/main/resources/shaders/screen.frag",GL20.GL_FRAGMENT_SHADER);
+        GenericShader fragment = new GenericShader("src/main/resources/shadersCap3/shader.frag",GL20.GL_FRAGMENT_SHADER);
         
         ArrayList<GenericShader> shaders = new ArrayList<GenericShader>();
         shaders.add(vertex);

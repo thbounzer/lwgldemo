@@ -45,9 +45,11 @@ public class GenericShader {
     private boolean isCompiled = false;
     private int shaderId;
     private int programId;
+    private String sourceFileName;
     
     public GenericShader(String shader, int type){
         shaderFile = new File(shader);
+        sourceFileName = shaderFile.getName();
         BufferedReader reader = null;
         shaderId = GL20.glCreateShader(type);
         try {
@@ -57,7 +59,7 @@ public class GenericShader {
                     shaderSource.append(line).append("\n");
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "{0}Unable to load shader from:", shaderFile.getAbsolutePath());
+            logger.log(Level.SEVERE, "Unable to load shader from:{0}", shaderFile.getAbsolutePath());
         } finally{
             IOUtils.closeQuietly(reader);
         }
@@ -85,6 +87,10 @@ public class GenericShader {
     
     public StringBuffer getSource(){
         return shaderSource;
+    }
+
+    public String getSourceFileName() {
+        return sourceFileName;
     }
     
     

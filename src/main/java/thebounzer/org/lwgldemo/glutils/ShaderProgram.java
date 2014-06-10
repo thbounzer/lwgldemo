@@ -80,15 +80,19 @@ public class ShaderProgram {
         compileShader(programId, shader);
         setAttributes(programId, attributes);
         if (!validateProgram(programId)){
+            destroy();
             throw new IOException("Unable to compile the shader program.");
         }        
         pId = programId;
     }
     
     
-    private void compileShader(int programId, GenericShader shader){
+    private void compileShader(int programId, GenericShader shader) throws IOException{
         GL20.glShaderSource(shader.getShaderId(), shader.getSource());
         GL20.glCompileShader(shader.getShaderId());
+        if (!validateCompilation(shader)){
+            throw new IOException("Shader compilation failed, see log!");
+        }
         GL20.glAttachShader(programId, shader.getShaderId());        
     }
     
@@ -100,7 +104,7 @@ public class ShaderProgram {
         for(Entry e : attributes.entrySet()){
             int n = (Integer) e.getKey();
             String s = (String) e.getValue();
-            GL20.glBindAttribLocation(programId, n, s);    
+            GL20.glBindAttribLocation(programId, n, s);   
         }
     }
     
@@ -114,6 +118,19 @@ public class ShaderProgram {
             result = false;
         }
         return result;
+    }
+    
+    private boolean validateCompilation(GenericShader shader){
+        boolean retValue = true;
+        int isCompiled = GL20.glGetShaderi(shader.getShaderId(), GL20.GL_COMPILE_STATUS);
+        if (isCompiled == GL11.GL_FALSE){
+            int logLen = GL20.glGetShaderi(shader.getShaderId(),GL20.GL_INFO_LOG_LENGTH);
+            String log = GL20.glGetShaderInfoLog(shader.getShaderId(),logLen);
+            logger.log(Level.SEVERE, "Error compiling shader: {0}", shader.getSourceFileName());
+            logger.log(Level.SEVERE, log);
+            retValue = false;
+        }
+        return retValue;
     }
     
     public void destroy(){

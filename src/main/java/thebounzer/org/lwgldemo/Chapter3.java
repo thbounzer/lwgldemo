@@ -76,7 +76,7 @@ public class Chapter3 extends Chapter{
         try {        
             program.compile(shaders);
         } catch (IOException ex) {
-            Logger.getLogger(Chapter3.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Chapter3.class.getName()).log(Level.SEVERE, "Something has fucked up on shader creation.", ex);
         }
     }
 

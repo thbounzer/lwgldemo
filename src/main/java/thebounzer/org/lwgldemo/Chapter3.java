@@ -55,7 +55,7 @@ public class Chapter3 extends Chapter{
         vaoId = GL30.glGenVertexArrays();
         GL30.glBindVertexArray(vaoId);	        
         attributesBind(time+=0.01f);
-        GL11.glDrawArrays(GL11.GL_LINE_LOOP, 0, 3);
+        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 3);
         GL20.glUseProgram(0);
     }
     

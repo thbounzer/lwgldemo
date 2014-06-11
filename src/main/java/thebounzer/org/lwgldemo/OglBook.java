@@ -23,10 +23,16 @@
  */
 
 package thebounzer.org.lwgldemo;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.Util;
+
 import thebounzer.org.lwgldemo.glutils.OpenGLDisplay;
-import thebounzer.org.thboglutils.FColor;
+import thebounzer.org.lwgldemo.glutils.ShaderProgram;
+
 
 /**
  *
@@ -36,16 +42,18 @@ public class OglBook {
     private static final int WIDTH = 300;
     private static final int HEIGHT = 300;
     private static final String TITLE = "OGL BOOK EXAMPLES";
-    
+    private static final Logger logger = Logger.getLogger(ShaderProgram.class.getName());
     
     
     public OglBook(){
         // Initialize OpenGL (Display)
         this.setupOpenGL();
+        this.printOpenglInfo();
+        Util.checkGLError();
         Chapter chapter = new Chapter3();
         chapter.shaderSetup();
         // Setup background color
-        float[] color = new FColor().black();
+        float[] color = new float[]{0.0f,0.0f,0.0f,1.0f};
         GL11.glClearColor(color[0],color[1],color[2],color[3]);
         while (!Display.isCloseRequested()) {
                 // Do a single loop (logic/render)
@@ -73,6 +81,24 @@ public class OglBook {
     public void destroyDisplay() {
         Display.destroy();
     }
-   
     
+    private void printOpenglInfo(){
+        StringBuffer info = new StringBuffer();
+        String newline = "\n";
+        info.append(GL11.glGetString(GL11.GL_VERSION).concat(newline));
+        info.append(GL11.glGetString(GL11.GL_VENDOR).concat(newline));
+        info.append(GL11.glGetString(GL11.GL_RENDERER).concat(newline));
+        int extensions = GL11.glGetInteger(GL30.GL_NUM_EXTENSIONS);
+        info.append(getSupportedExtensions(extensions));
+        logger.log(Level.INFO, "OpenGL version info: {0}", info);
+    }
+        
+    private String getSupportedExtensions(int extensionsQty){
+        int i;
+        StringBuffer supportedExtensions = new StringBuffer("Supported extensions are:\n");
+        for (i=0;i<extensionsQty;i++){
+            supportedExtensions.append(GL30.glGetStringi(GL11.GL_EXTENSIONS, i).concat("\n"));
+        }
+        return supportedExtensions.toString();
+    }    
 }

@@ -38,11 +38,17 @@ import org.lwjgl.opengl.PixelFormat;
 public class OpenGLDisplay {
     
     public static void init(int width, int height, String title){
+        // Setup an OpenGL context with API version 3.2
         try {
             PixelFormat pixelFormat = new PixelFormat();
+            ContextAttribs contextAtrributes = new ContextAttribs(3, 2)
+                    .withForwardCompatible(true)
+                    .withProfileCore(true);
+
             Display.setDisplayMode(new DisplayMode(width, height));
             Display.setTitle(title);
-            Display.create(pixelFormat);
+            Display.create(pixelFormat, contextAtrributes);
+
             GL11.glViewport(0, 0, width, height);
         } catch (LWJGLException e) {
             e.printStackTrace();

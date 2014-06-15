@@ -24,15 +24,37 @@
 
 package thebounzer.org.lwgldemo;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import thebounzer.org.lwgldemo.glutils.GenericShader;
+import thebounzer.org.lwgldemo.glutils.ShaderProgram;
+
 /**
  *
  * @author thbounzer
  */
 public abstract class Chapter {
     
+    protected ShaderProgram program;
+    protected int vaoId;
+    protected float time = 0.01f;    
+    protected ArrayList<GenericShader> shaders = new ArrayList<GenericShader>();
+    
+    public abstract void configure();
+    
     public abstract void loopCycle();
     
-    public abstract void shaderSetup();
+    protected void shaderSetup(){
+        // Create a new shader program that links both shaders
+        program = new ShaderProgram();
+        try {        
+            program.compile(shaders);
+        } catch (IOException ex) {
+            Logger.getLogger(Chapter3.class.getName()).log(Level.SEVERE, "Something has fucked up on shader creation.", ex);
+        }        
+    }
     
     public abstract void destroy();
     

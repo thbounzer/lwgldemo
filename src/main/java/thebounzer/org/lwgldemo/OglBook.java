@@ -51,7 +51,7 @@ public class OglBook {
         this.printOpenglInfo();
         Util.checkGLError();
         Chapter chapter = new Chapter3();
-        chapter.shaderSetup();
+        chapter.configure();
         // Setup background color
         float[] color = new float[]{0.0f,0.0f,0.0f,1.0f};
         GL11.glClearColor(color[0],color[1],color[2],color[3]);
@@ -88,8 +88,8 @@ public class OglBook {
         info.append(GL11.glGetString(GL11.GL_VERSION).concat(newline));
         info.append(GL11.glGetString(GL11.GL_VENDOR).concat(newline));
         info.append(GL11.glGetString(GL11.GL_RENDERER).concat(newline));
-        int extensions = GL11.glGetInteger(GL30.GL_NUM_EXTENSIONS);
-        info.append(getSupportedExtensions(extensions));
+        //int extensions = GL11.glGetInteger(GL30.GL_NUM_EXTENSIONS);
+        //info.append(getSupportedExtensions(extensions));
         logger.log(Level.INFO, "OpenGL version info: {0}", info);
     }
         
@@ -97,7 +97,9 @@ public class OglBook {
         int i;
         StringBuffer supportedExtensions = new StringBuffer("Supported extensions are:\n");
         for (i=0;i<extensionsQty;i++){
-            supportedExtensions.append(GL30.glGetStringi(GL11.GL_EXTENSIONS, i).concat("\n"));
+            String info = GL30.glGetStringi(GL11.GL_EXTENSIONS, i);
+            if (info != null)
+                supportedExtensions.append(info.concat("\n"));
         }
         return supportedExtensions.toString();
     }    

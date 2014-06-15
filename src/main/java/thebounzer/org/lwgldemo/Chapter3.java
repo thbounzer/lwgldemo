@@ -24,16 +24,10 @@
 
 package thebounzer.org.lwgldemo;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import thebounzer.org.lwgldemo.glutils.GenericShader;
-import thebounzer.org.lwgldemo.glutils.ShaderProgram;
-import thebounzer.org.thboglutils.FColor;
 
 /**
  *
@@ -41,10 +35,12 @@ import thebounzer.org.thboglutils.FColor;
  */
 public class Chapter3 extends Chapter{
     
-    private ShaderProgram program;
-    private int vaoId;
-    private float time = 0.01f;
-    
+    @Override
+    public void configure() {
+        shaders.add(new GenericShader("src/main/resources/shadersCap3/shader.vert",GL20.GL_VERTEX_SHADER));
+        shaders.add(new GenericShader("src/main/resources/shadersCap3/shader.frag",GL20.GL_FRAGMENT_SHADER));
+        shaderSetup();
+    }
     
     @Override
     public void loopCycle() {
@@ -63,22 +59,7 @@ public class Chapter3 extends Chapter{
         GL20.glVertexAttrib1f(0, time);
     }
 
-    @Override
-    public void shaderSetup() {
-        GenericShader vertex = new GenericShader("src/main/resources/shadersCap3/shader.vert",GL20.GL_VERTEX_SHADER); 
-        GenericShader fragment = new GenericShader("src/main/resources/shadersCap3/shader.frag",GL20.GL_FRAGMENT_SHADER);
-        
-        ArrayList<GenericShader> shaders = new ArrayList<GenericShader>();
-        shaders.add(vertex);
-        shaders.add(fragment);
-        // Create a new shader program that links both shaders
-        program = new ShaderProgram();
-        try {        
-            program.compile(shaders);
-        } catch (IOException ex) {
-            Logger.getLogger(Chapter3.class.getName()).log(Level.SEVERE, "Something has fucked up on shader creation.", ex);
-        }
-    }
+
 
     @Override
     public void destroy() {
@@ -86,6 +67,8 @@ public class Chapter3 extends Chapter{
         GL30.glBindVertexArray(0);
         GL30.glDeleteVertexArrays(vaoId);        
     }
+
+
     
     
     

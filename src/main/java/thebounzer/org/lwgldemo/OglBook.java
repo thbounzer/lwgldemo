@@ -39,8 +39,8 @@ import thebounzer.org.lwgldemo.glutils.ShaderProgram;
  * @author thbounzer
  */
 public class OglBook {
-    private static final int WIDTH = 300;
-    private static final int HEIGHT = 300;
+    private static final int WIDTH = 600;
+    private static final int HEIGHT = 600;
     private static final String TITLE = "OGL BOOK EXAMPLES";
     private static final Logger logger = Logger.getLogger(ShaderProgram.class.getName());
     
@@ -50,14 +50,14 @@ public class OglBook {
         this.setupOpenGL();
         this.printOpenglInfo();
         Util.checkGLError();
-        Chapter chapter = new Chapter3();
+        Chapter chapter = new Chapter5();
         chapter.configure();
         // Setup background color
         float[] color = new float[]{0.0f,0.0f,0.0f,1.0f};
         GL11.glClearColor(color[0],color[1],color[2],color[3]);
         while (!Display.isCloseRequested()) {
                 // Do a single loop (logic/render)
-                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+                //GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
                 chapter.loopCycle();
                 // Force a maximum FPS of about 60
                 Display.sync(60);

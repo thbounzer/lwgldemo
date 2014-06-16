@@ -1,7 +1,7 @@
 #version 330 core
 
 // "offset" is an input vertex attribute
-layout (location = 0) in float time;
+layout (location = 1) in float time;
 
 out VS_OUT
 {

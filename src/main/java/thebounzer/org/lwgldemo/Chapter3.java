@@ -56,7 +56,7 @@ public class Chapter3 extends Chapter{
     }
     
     private void attributesBind(float time){
-        GL20.glVertexAttrib1f(0, time);
+        GL20.glVertexAttrib1f(1, time);
     }
 
 
